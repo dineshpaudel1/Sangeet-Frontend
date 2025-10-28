@@ -4,6 +4,9 @@ import { Search, Download, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSearch } from "../context/SearchContext";
 import axios from "axios";
+import { User, LogOut } from "lucide-react";
+import ProfileDropdown from "./ProfileDropdown";
+
 
 const Navbar = () => {
   const { user, logout, loading } = useUser();
@@ -192,24 +195,8 @@ const Navbar = () => {
               className="w-10 h-10 rounded-full border border-gray-700 cursor-pointer"
               onClick={() => setDropdownOpen((prev) => !prev)}
             />
-            {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-[#1f1f1f] text-sm rounded-lg shadow-lg overflow-hidden z-50">
-                <Link
-                  to="/profile"
-                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-800 dark:text-white"
-                >
-                  ⚙️ Settings
-                </Link>
-                <button
-                  onClick={logout}
-                  className="w-full text-left px-4 py-4 text-red-500 hover:bg-red-50 dark:hover:bg-red-900"
-                >
-                  🚪 Logout
-                </button>
-              </div>
-            )}
+            {dropdownOpen && <ProfileDropdown logout={logout} />}
           </div>
-
         )}
       </div>
     </div>

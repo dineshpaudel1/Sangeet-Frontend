@@ -16,6 +16,7 @@ import PlaylistDetails from './pages/PlayListDetails';
 import SearchResults from './pages/SearchResults';
 import { useSearch } from './context/SearchContext';
 import ScrollToTop from './components/ScrollToTop';
+import Profile from './pages/Profile';
 
 function App() {
   const { token: spotifyToken, isAuthChecked, redirectToSpotify } = useSpotifyAuth();
@@ -137,6 +138,7 @@ function App() {
             <Route path="playlists" element={<MyPlaylists />} />
             <Route path="playlist/:id" element={<PlaylistDetails />} />
             <Route path="following" element={<Following />} />
+            <Route path="profile" element={<Profile />} />
             <Route path="search" element={<SearchResults setSearchQuery={setSearchQuery} />} />
             <Route path="song-details/:id" element={<SongDetails />} />
             <Route
