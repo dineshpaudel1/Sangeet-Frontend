@@ -15,6 +15,7 @@ import Following from './pages/Following';
 import PlaylistDetails from './pages/PlayListDetails';
 import SearchResults from './pages/SearchResults';
 import { useSearch } from './context/SearchContext';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   const { token: spotifyToken, isAuthChecked, redirectToSpotify } = useSpotifyAuth();
@@ -95,6 +96,7 @@ function App() {
     <>
       <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route
             path="/login"
