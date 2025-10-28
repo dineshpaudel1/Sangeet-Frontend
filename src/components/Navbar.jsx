@@ -14,6 +14,8 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
   const inputRef = useRef(null);
+  const profileRef = useRef(null);
+
 
   const fetchHistory = async () => {
     try {
@@ -60,7 +62,7 @@ const Navbar = () => {
         const { exact_song, exact_artist } = res.data;
 
         if (exact_song || exact_artist) {
-          
+
           const token = localStorage.getItem("authToken");
           await axios.post("http://localhost:8000/api/save-search-keyword/", {
             keyword: trimmed,
@@ -81,17 +83,21 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (
-        !dropdownRef.current?.contains(e.target) &&
-        !inputRef.current?.contains(e.target)
-      ) {
-        setDropdownOpen(false);
+      // close search history if clicked outside
+      if (!dropdownRef.current?.contains(e.target) && !inputRef.current?.contains(e.target)) {
         setHistoryOpen(false);
       }
+
+      // close profile dropdown only if clicked outside profile area
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
 
   return (
     <div className="w-full fixed h-20 bg-[#121212] flex items-center justify-between px-6 shadow-sm border-b border-gray-800 z-50">
@@ -116,46 +122,46 @@ const Navbar = () => {
 
         {historyOpen && searchHistory.length > 0 && (
           <div className="absolute top-full left-0 w-full mt-2 bg-[#1f1f1f] rounded-lg shadow-lg z-[999] overflow-hidden border border-neutral-700">
-           <ul>
-            {[...searchHistory].slice(0, 5).reverse().map((item) => (
-              <li
-                key={item.id}
-                className="flex items-center justify-between hover:bg-[#2a2a2a] px-4 py-2"
-              >
-                <div
-                  className="flex items-center gap-3 cursor-pointer"
-                  onClick={() => {
-                    setSearchQuery(item.keyword);
-                    navigate(`/search?q=${encodeURIComponent(item.keyword)}`);
-                    setHistoryOpen(false);
-                  }}
+            <ul>
+              {[...searchHistory].slice(0, 5).reverse().map((item) => (
+                <li
+                  key={item.id}
+                  className="flex items-center justify-between hover:bg-[#2a2a2a] px-4 py-2"
                 >
-                  {item.type === "song" ? (
-                    <>
-                      <img src={item.cover_url} alt={item.title} className="w-10 h-10 rounded" />
-                      <div>
-                        <p className="text-sm font-semibold">{item.title}</p>
-                        <p className="text-xs text-gray-400">{item.artist}</p>
-                      </div>
-                    </>
-                  ) : item.type === "artist" ? (
-                    <>
-                      <img src={item.picture_url} alt={item.artist_name} className="w-10 h-10 rounded-full" />
-                      <p className="text-sm font-semibold">{item.artist_name}</p>
-                    </>
-                  ) : (
-                    <p className="text-sm">{item.keyword}</p>
-                  )}
-                </div>
-                <button 
-                  onClick={() => deleteKeyword(item.id)} 
-                  className="text-gray-400 hover:text-red-400 p-1 rounded focus:outline-none focus:ring-0 border-none"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </li>
-            ))}
-          </ul>
+                  <div
+                    className="flex items-center gap-3 cursor-pointer"
+                    onClick={() => {
+                      setSearchQuery(item.keyword);
+                      navigate(`/search?q=${encodeURIComponent(item.keyword)}`);
+                      setHistoryOpen(false);
+                    }}
+                  >
+                    {item.type === "song" ? (
+                      <>
+                        <img src={item.cover_url} alt={item.title} className="w-10 h-10 rounded" />
+                        <div>
+                          <p className="text-sm font-semibold">{item.title}</p>
+                          <p className="text-xs text-gray-400">{item.artist}</p>
+                        </div>
+                      </>
+                    ) : item.type === "artist" ? (
+                      <>
+                        <img src={item.picture_url} alt={item.artist_name} className="w-10 h-10 rounded-full" />
+                        <p className="text-sm font-semibold">{item.artist_name}</p>
+                      </>
+                    ) : (
+                      <p className="text-sm">{item.keyword}</p>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => deleteKeyword(item.id)}
+                    className="text-gray-400 hover:text-red-400 p-1 rounded focus:outline-none focus:ring-0 border-none"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </li>
+              ))}
+            </ul>
 
             {/* Clear All */}
             <div className="flex justify-between items-center px-4 py-2 border-t border-neutral-700">
@@ -179,7 +185,7 @@ const Navbar = () => {
         </button>
 
         {!loading && user && (
-          <div className="relative">
+          <div className="relative" ref={profileRef}>
             <img
               src={user.profile_picture || "https://i.pravatar.cc/40"}
               alt="Profile"
@@ -203,6 +209,7 @@ const Navbar = () => {
               </div>
             )}
           </div>
+
         )}
       </div>
     </div>
